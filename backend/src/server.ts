@@ -3,6 +3,11 @@ import { analyzeSentiment } from "./services/sentiment.service";
 import { pool } from "./db";
 
 const app = express();
+const port = Number(process.env.PORT || 3000);
+
+app.listen(port, () => {
+  console.log(`Backend running on port ${port}`);
+});
 
 app.use(express.json());
 
@@ -51,14 +56,32 @@ app.post("/analyze", async (req, res) => {
   }
 });
 
-app.get("/headlines", async (_req, res) => {
+app.get("/stats", async (_req, res) => {
   try {
     const result = await pool.query(
       `
-      SELECT *
+      SELECT
+        COALESCE(region, 'Unknown') AS region,
+
+        COUNT(*) AS total_headlines,
+
+        SUM(CASE WHEN sentiment = 'positive' THEN 1 ELSE 0 END) AS positive_count,
+        SUM(CASE WHEN sentiment = 'neutral' THEN 1 ELSE 0 END) AS neutral_count,
+        SUM(CASE WHEN sentiment = 'negative' THEN 1 ELSE 0 END) AS negative_count,
+
+        AVG(
+          CASE
+            WHEN sentiment = 'positive' THEN 1
+            WHEN sentiment = 'neutral' THEN 0
+            WHEN sentiment = 'negative' THEN -1
+          END
+        ) AS mood_score,
+
+        AVG(confidence) AS average_confidence
+
       FROM headlines
-      ORDER BY created_at DESC
-      LIMIT 100
+      GROUP BY COALESCE(region, 'Unknown')
+      ORDER BY region ASC
       `
     );
 
@@ -67,13 +90,7 @@ app.get("/headlines", async (_req, res) => {
     console.error(error);
 
     return res.status(500).json({
-      error: "Failed to fetch headlines"
+      error: "Failed to fetch statistics"
     });
   }
-});
-
-const port = Number(process.env.PORT || 3000);
-
-app.listen(port, () => {
-  console.log(`Backend running on port ${port}`);
 });
