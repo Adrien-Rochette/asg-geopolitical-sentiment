@@ -28,9 +28,13 @@ def build_vocab(texts: list[str]) -> dict[str, int]:
     return vocab
 
 
-def encode_text(text: str, vocab: dict[str, int]) -> list[int]:
+def encode_text(text: str, vocab: dict[str, int], max_len: int = 8) -> list[int]:
     """
-    Transforme une phrase en liste d'identifiants numériques.
+    Transforme une phrase en liste d'identifiants numériques
+    de longueur fixe.
+
+    Si la phrase est trop longue, on la coupe.
+    Si elle est trop courte, on ajoute du padding.
     """
 
     tokens = tokenize(text)
@@ -38,11 +42,15 @@ def encode_text(text: str, vocab: dict[str, int]) -> list[int]:
     ids = []
 
     for token in tokens:
-        # TODO :
-        # récupérer l'identifiant du token dans vocab
-        # si le mot n'existe pas, utiliser UNK_TOKEN
         token_id = vocab.get(token, vocab[UNK_TOKEN])
         ids.append(token_id)
+
+    # Cas 1 : phrase trop longue
+    ids = ids[:max_len]
+
+    # Cas 2 : phrase trop courte
+    while len(ids) < max_len:
+        ids.append(vocab[PAD_TOKEN])
 
     return ids
 
@@ -59,9 +67,12 @@ if __name__ == "__main__":
     print("Vocabulaire :")
     print(vocab)
 
-    example = "Peace talks resume"
+    example = "Peace talks resume between two countries after long negotiations"
 
-    encoded = encode_text(example, vocab)
+    encoded = encode_text(example, vocab, max_len=8)
+    
+    print("Longueur de la phrase encodée :")
+    print(len(encoded))
 
     print("Phrase :")
     print(example)
