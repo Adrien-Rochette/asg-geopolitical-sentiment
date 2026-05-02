@@ -94,3 +94,58 @@ app.get("/stats", async (_req, res) => {
     });
   }
 });
+
+app.get("/dashboard-data", async (_req, res) => {
+  try {
+    const statsResult = await pool.query(
+      `
+      SELECT
+        COALESCE(region, 'Unknown') AS region,
+        COUNT(*) AS total_headlines,
+        SUM(CASE WHEN sentiment = 'positive' THEN 1 ELSE 0 END) AS positive_count,
+        SUM(CASE WHEN sentiment = 'neutral' THEN 1 ELSE 0 END) AS neutral_count,
+        SUM(CASE WHEN sentiment = 'negative' THEN 1 ELSE 0 END) AS negative_count,
+        AVG(
+          CASE
+            WHEN sentiment = 'positive' THEN 1
+            WHEN sentiment = 'neutral' THEN 0
+            WHEN sentiment = 'negative' THEN -1
+          END
+        ) AS mood_score,
+        AVG(confidence) AS average_confidence
+      FROM headlines
+      GROUP BY COALESCE(region, 'Unknown')
+      ORDER BY region ASC
+      `
+    );
+
+    const headlinesResult = await pool.query(
+      `
+      SELECT
+        id,
+        title,
+        sentiment,
+        confidence,
+        source,
+        region,
+        created_at
+      FROM headlines
+      ORDER BY created_at DESC
+      LIMIT 10
+      `
+    );
+
+    return res.json({
+      regions: statsResult.rows,
+      latest_headlines: headlinesResult.rows
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      error: "Failed to fetch dashboard data"
+    });
+  }
+}
+
+);
