@@ -77,3 +77,12 @@ if __name__ == "__main__":
 
     print("Loss après une étape :")
     print(loss_after.item())
+
+    probabilities = torch.softmax(logits_after, dim=1)
+    predicted_classes = torch.argmax(probabilities, dim=1)
+
+    print("Probabilités après entraînement :")
+    print(probabilities)
+
+    print("Classes prédites après entraînement :")
+    print(predicted_classes)
