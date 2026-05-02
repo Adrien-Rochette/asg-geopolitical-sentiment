@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>ASG Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #f5f5f5;
+      color: #222;
+    }
+
+    h1, h2 {
+      color: #111;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background: #eee;
+    }
+
+    .positive {
+      color: green;
+      font-weight: bold;
+    }
+
+    .negative {
+      color: red;
+      font-weight: bold;
+    }
+
+    .neutral {
+      color: #555;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>ASG - Analyseur de Sentiments Géopolitiques</h1>
+
+  <div class="card">
+    <h2>Statistiques par région</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Région</th>
+          <th>Total</th>
+          <th>Positifs</th>
+          <th>Neutres</th>
+          <th>Négatifs</th>
+          <th>Score moral</th>
+          <th>Confiance moyenne</th>
+        </tr>
+      </thead>
+      <tbody id="regions-body"></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Derniers titres analysés</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Sentiment</th>
+          <th>Confiance</th>
+          <th>Source</th>
+          <th>Région</th>
+        </tr>
+      </thead>
+      <tbody id="headlines-body"></tbody>
+    </table>
+  </div>
+
+  <script>
+    function formatNumber(value) {
+      if (value === null || value === undefined) {
+        return "-";
+      }
+
+      return Number(value).toFixed(3);
+    }
+
+    function sentimentClass(sentiment) {
+      if (sentiment === "positive") return "positive";
+      if (sentiment === "negative") return "negative";
+      return "neutral";
+    }
+
+    async function loadDashboard() {
+      const response = await fetch("/dashboard-data");
+      const data = await response.json();
+
+      const regionsBody = document.getElementById("regions-body");
+      regionsBody.innerHTML = "";
+
+      data.regions.forEach((region) => {
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+          <td>${region.region}</td>
+          <td>${region.total_headlines}</td>
+          <td>${region.positive_count}</td>
+          <td>${region.neutral_count}</td>
+          <td>${region.negative_count}</td>
+          <td>${formatNumber(region.mood_score)}</td>
+          <td>${formatNumber(region.average_confidence)}</td>
+        `;
+
+        regionsBody.appendChild(row);
+      });
+
+      const headlinesBody = document.getElementById("headlines-body");
+      headlinesBody.innerHTML = "";
+
+      data.latest_headlines.forEach((headline) => {
+        const row = document.createElement("tr");
+        const cls = sentimentClass(headline.sentiment);
+
+        row.innerHTML = `
+          <td>${headline.title}</td>
+          <td class="${cls}">${headline.sentiment}</td>
+          <td>${formatNumber(headline.confidence)}</td>
+          <td>${headline.source || "-"}</td>
+          <td>${headline.region || "-"}</td>
+        `;
+
+        headlinesBody.appendChild(row);
+      });
+    }
+
+    loadDashboard();
+  </script>
+</body>
+</html>

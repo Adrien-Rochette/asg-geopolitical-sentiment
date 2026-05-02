@@ -1,6 +1,7 @@
 import express from "express";
 import { analyzeSentiment } from "./services/sentiment.service";
 import { pool } from "./db";
+import path from "path";
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
@@ -10,6 +11,12 @@ app.listen(port, () => {
 });
 
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "../public")));
+
+
+app.get("/dashboard", (_req, res) => {
+  res.sendFile(path.join(__dirname, "../public/dashboard.html"));
+});
 
 app.get("/health", (_req, res) => {
   res.json({
