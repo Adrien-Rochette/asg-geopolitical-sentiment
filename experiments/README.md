@@ -518,3 +518,25 @@ Backend TypeScript
 FastAPI Python + PyTorch
    ↓
 PostgreSQL
+
+
+Docker sert à lancer tout le projet dans des environnements isolés.
+
+Sans Docker, il faut lancer à la main :
+
+PostgreSQL local
+Python + venv + FastAPI
+NodeJS + backend
+variables d’environnement
+ports
+dépendances
+
+Avec Docker :
+
+docker compose up --build
+
+lance tout :
+
+postgres
+ai-service
+backend
