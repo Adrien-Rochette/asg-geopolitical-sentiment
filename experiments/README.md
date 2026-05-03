@@ -540,3 +540,9 @@ lance tout :
 postgres
 ai-service
 backend
+
+
+npm = lance le backend Node/TypeScript
+uvicorn = lance l’API Python FastAPI
+PyTorch = fait la prédiction
+fetch = récupère les données côté dashboard
