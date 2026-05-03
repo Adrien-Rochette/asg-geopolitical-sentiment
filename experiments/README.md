@@ -507,3 +507,14 @@ optimizer.step()
 optimizer.zero_grad()
 Résumé ultra court
 données → modèle → logits → loss → backward → update
+
+
+Utilisateur
+   ↓
+Dashboard / requête HTTP
+   ↓
+Backend TypeScript
+   ↓
+FastAPI Python + PyTorch
+   ↓
+PostgreSQL
