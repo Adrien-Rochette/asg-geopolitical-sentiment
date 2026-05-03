@@ -458,3 +458,5 @@ Tu peux résumer comme ça :
 
 Le modèle fonctionne bien sur des phrases proches du dataset, mais il généralise mal. Par exemple, une phrase contenant "violence" peut être mal classée si ce mot est peu présent dans les données d’entraînement. Cela montre que le modèle apprend des corrélations simples plutôt qu’une compréhension réelle du texte.
 si je veux de nouvelle choses je dois aller dans /docs
+
+J’ai entraîné un modèle de classification de texte en PyTorch : je transforme les titres en vecteurs via un embedding, puis un réseau de neurones apprend à prédire une classe (positif, neutre, négatif) en minimisant une fonction de perte avec backpropagation.
