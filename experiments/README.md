@@ -455,3 +455,6 @@ Tu peux résumer comme ça :
 > J’ai construit un modèle PyTorch simple de classification de texte. Le pipeline transforme un titre en tokens, puis en identifiants numériques, ajoute du padding, convertit le tout en tenseur, passe par une couche d’embedding, puis par un petit réseau linéaire qui produit trois classes : positif, neutre ou négatif. Le modèle est entraîné avec CrossEntropyLoss et backpropagation.
 >
 > La limite principale est que le dataset est très petit, donc le modèle peut surapprendre et afficher une confiance artificiellement élevée. Il ne comprend pas réellement le contexte géopolitique, il apprend surtout des associations entre mots et labels. C’est un modèle pédagogique qui montre le pipeline complet, mais pour une version robuste il faudrait un vrai dataset, une évaluation sérieuse, et probablement un modèle plus avancé comme un LSTM, un Transformer ou un modèle pré-entraîné.
+
+Le modèle fonctionne bien sur des phrases proches du dataset, mais il généralise mal. Par exemple, une phrase contenant "violence" peut être mal classée si ce mot est peu présent dans les données d’entraînement. Cela montre que le modèle apprend des corrélations simples plutôt qu’une compréhension réelle du texte.
+si je veux de nouvelle choses je dois aller dans /docs
