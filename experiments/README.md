@@ -460,3 +460,50 @@ Le modèle fonctionne bien sur des phrases proches du dataset, mais il général
 si je veux de nouvelle choses je dois aller dans /docs
 
 J’ai entraîné un modèle de classification de texte en PyTorch : je transforme les titres en vecteurs via un embedding, puis un réseau de neurones apprend à prédire une classe (positif, neutre, négatif) en minimisant une fonction de perte avec backpropagation.
+
+Type de ML que tu fais
+supervised learning (apprentissage supervisé)
+→ classification
+
+Tu as :
+
+entrée : texte
+sortie : label (positive / neutral / negative)
+Autres types classiques en machine learning
+classification → prédire une catégorie
+régression → prédire une valeur (ex: prix)
+clustering → regrouper sans labels
+réduction de dimension → simplifier les données
+génération → créer du texte/images
+
+Les lignes de code les plus importantes (ML pur)
+1. Modèle
+model = SentimentClassifier(...)
+2. Fonction de perte
+criterion = nn.CrossEntropyLoss()
+
+explication : mesure l’erreur entre prédiction et vraie classe
+
+3. Optimiseur
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+
+explication : met à jour les poids du modèle
+
+4. Forward (prédiction)
+logits = model(input_ids)
+
+explication : passage dans le réseau
+
+5. Calcul de la loss
+loss = criterion(logits, y_true)
+6. Backpropagation
+loss.backward()
+
+explication : calcule les gradients
+
+7. Mise à jour des poids
+optimizer.step()
+8. Reset gradients
+optimizer.zero_grad()
+Résumé ultra court
+données → modèle → logits → loss → backward → update
